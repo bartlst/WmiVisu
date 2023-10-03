@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block contener%}
+<button class="standardButton standardButton--action standardButton--addServer">Add server</button>
+<div class="contentCard contentCard--serverList">
+    <table class="serverList">
+        <tr class="serverList__item">
+            <th class="serverList__item__first serverList__item--heading">Status</th>
+            <th class="serverList__item__second serverList__item--heading">Server name</th>
+            <th class="serverList__item__third serverList__item--heading">IP Address</th>
+        </tr>
+        <tr class="serverList__item">
+            <td class="serverList__item__first"><div class="serverList__status yellow">W</div></td>
+            <td class="serverList__item__second">Peter</td>
+            <td class="serverList__item__third">123.123.123.123</th>
+            <td class="serverList__item__fourth"><img src="{{url_for('static', filename='icon-settings-black.svg')}}" alt=""></th>
+        </tr>
+        <tr class="serverList__item">
+            <td class="serverList__item__first"><div class="serverList__status red">E</div></td>
+            <td class="serverList__item__second">123.123.123.123</td>
+            <td class="serverList__item__third">123.123.123.123</th>
+            <td class="serverList__item__fourth"><img src="{{url_for('static', filename='icon-settings-black.svg')}}" alt=""></th>
+        </tr>
+        <tr class="serverList__item">
+            <td class="serverList__item__first"><div class="serverList__status green">OK</div></td>
+            <td class="serverList__item__second">Peter</td>
+            <td class="serverList__item__third">123.123.123.123</th>
+            <td class="serverList__item__fourth"><img src="{{url_for('static', filename='icon-settings-black.svg')}}" alt=""></th>
+        </tr>
+    </table>
+</div>
+<script>
+    document.getElementById("manageServers").classList.add('active')
+</script>
+
+
+<div class="modal">
+    <div class="basicForm">
+        <h2 class="basicForm__title">Are you sure?</h2>
+        
+        <div class="basicForm__buttonsWrapper">
+            <button class="buttonsWrapper__button--positive"></button>
+            <button class="buttonsWrapper__button--legative"></button>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+

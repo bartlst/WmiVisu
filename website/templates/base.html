@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='global.css')}}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;1,400&display=swap"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@1,500&display=swap" rel="stylesheet">
+    <title>{% block title %}Home{% endblock %}</title>
+
+</head>
+<body>
+    <div class="body__overlay"></div>
+    <div class="menu">
+        <div class="menu__item__wrapper menu__item__wrapper--top">
+            <button class="menu__item menu__item--logo"><img src="{{url_for('static', filename='logo.svg')}}" alt="">WMI Checker</button>
+        </div>
+        <div class="menu__item__wrapper menu__item__wrapper--mid">
+            <a class="hiddenA" href="/"><button id="dashboard" class="menu__item menu__item--button"><img src="{{url_for('static', filename='icon-dashboard.svg')}}" alt="">Dashboard</button></a>
+            <a class="hiddenA" href="/manage_servers"><button id="manageServers" class="menu__item menu__item--button"><img src="{{url_for('static', filename='icon-dashboard-add.svg')}}" alt="">Manage servers</button></a>
+            <a class="hiddenA" href="/manage_servers"><button id="settings" class="menu__item menu__item--button"><img src="{{url_for('static', filename='icon-settings.svg')}}" alt="">Settings</button></a>
+        </div>
+        <div class="menu__item__wrapper menu__item__wrapper--bottom">
+            <button class="menu__item menu__item--button"><img src="{{url_for('static', filename='icon-log-off.svg')}}" alt="">Log off</button>
+        </div>
+    </div>
+
+    <div class="pageContent">
+        <div class="pageContent__text pageContent__text--helloMsg">Hi John,</div>
+        <div class="pageContent__text pageContent__text--msg">Check out server status</div>
+        <div class="pageContent__text pageContent__text--pageName">Servers</div>
+        <div class="navBar">
+            <div class="notification-icon"></div>
+            <div class="profileBar">
+                <div class="profileBar__avatar"></div>
+                <div class="profileBar__name">John Bartosh</div>
+            </div>
+        </div>
+        {% block contener%}{% endblock %}
+    </div>
+</body>
+
+</html>
