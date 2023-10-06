@@ -1,6 +1,9 @@
 {% extends "base.html" %}
+
+{% block subPageTitle %}Servers{% endblock %}
+
 {% block contener%}
-<button class="standardButton standardButton--action standardButton--addServer">Add server</button>
+<button class="standardButton standardButton--action standardButton--addServer" onclick="showModal()">Add server</button>
 <div class="contentCard contentCard--serverList">
     <table class="serverList">
         <tr class="serverList__item">
@@ -31,19 +34,50 @@
 <script>
     document.getElementById("manageServers").classList.add('active')
 </script>
-
-
-<div class="modal">
-    <div class="basicForm">
-        <h2 class="basicForm__title">Are you sure?</h2>
-        
-        <div class="basicForm__buttonsWrapper">
-            <button class="buttonsWrapper__button--positive"></button>
-            <button class="buttonsWrapper__button--legative"></button>
-        </div>
-    </div>
-</div>
-
-
 {% endblock %}
 
+{% block modalContener%}
+<form class="modal__basicForm">
+    <h2 class="basicForm__title">Add new server</h2>
+    
+    <div class="modal__basicForm__content">
+        <div class="Form__content__line">
+            <label class="Form__content__line__title" for="serverName">Server name</label>
+            <input maxlength="128" required type="text" class="Form__content__textInput" id="serverName" name="serverName" placeholder="Enter server name">
+            <p class="Form__content__line__error_msg" id="email-error-msg"></p>
+        </div>
+        <div class="Form__content__line">
+            <label  class="Form__content__line__title" for="serverName">Server name</label>
+            <input maxlength="128" required type="text" class="Form__content__textInput" id="serverName" name="serverName" placeholder="Enter server name">
+            <p class="Form__content__line__error_msg" id="email-error-msg"></p>
+        </div>
+        <div class="Form__content__line">
+            <label class="Form__content__line__title" for="serverName">Server name</label>
+            <input maxlength="128" required type="text" class="Form__content__textInput" id="serverName" name="serverName" placeholder="Enter server name">
+            <p class="Form__content__line__error_msg" id="email-error-msg"></p>
+        </div>
+        <div class="Form__content__line">
+            <label class="Form__content__line__title line__title--radio" for="serverName">Server name</label>
+            <div class="Form__content__radioOptions">
+                <input class="Form__content__radioOptions__radioButton" type="radio" required id="remote" name="OpportunityDetails_operation_mode" value="Remote">
+                <label for="remote">Remote</label>
+            </div>
+            <div class="Form__content__radioOptions">
+                <input class="Form__content__radioOptions__radioButton" type="radio" required id="remote" name="OpportunityDetails_operation_mode" value="Remote">
+                <label for="remote">Remote</label>
+            </div>
+            <div class="Form__content__radioOptions">
+                <input class="Form__content__radioOptions__radioButton" type="radio" required id="remote" name="OpportunityDetails_operation_mode" value="Remote">
+                <label for="remote">Remote</label>
+            </div>
+            <p class="Form__content__line__error_msg" id="email-error-msg"></p>
+        </div>
+    </div>
+
+
+    <div class="basicForm__buttonsWrapper">
+        <div class="buttonsWrapper__button button--negative"><a class="link" href="/manage_servers">Cancel</a></div>
+        <button class="buttonsWrapper__button button--positive">Add server</button>
+    </div>
+</form>
+{% endblock %}

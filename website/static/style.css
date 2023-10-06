@@ -1,235 +1,19 @@
-body
-{
-    background-color: var(--background);
-    height: 100%;
-    width: 100%;
-    margin: 0;
-}
-
-.hiddenA
-{
-    text-decoration: none;
-}
-.body__overlay{
-    display: none;
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    opacity: 0.7;
-    top:0;
-    background-color: #2C2C2C;
-}
-
-.body__overlay.active{
-    display: block;
-    z-index: 9;
-}
-
-.menu
-{
-    top:0;
-    background-color: var(--black);
-    position: sticky;
-    height: 100%;
-    width: 17.5rem;
-    float: left;
-}
-.menu__item
-{
-    align-items: center;
-    width: 100%;
-    padding-top: 1.25rem;
-    padding-bottom: 1.25rem;
-    padding-left: 4.88rem;
-    font-size: 1rem;
-    font-weight: 500;
-    line-height: 1;
-    color:var(--white);
-    background-color: var(--black);
-    border:0;
-    display: flex;
-}
-.menu__item--button
-{
-    cursor: pointer;
-    gap: 1rem;
-}
-
-.menu__item--button:hover
-{
-    border-left: 0.5rem solid #D9D9D9;
-    padding-left: 4.38rem;
-}
-/*TO DO JS*/
-.menu__item--button.active
-{
-    border-left: 0.25rem solid #D9D9D9;
-    padding-left: 4.63rem;
-}
-.menu__item--logo
-{
-    font-weight: 800;
-    gap: .5rem;
-}
-.menu__item__wrapper
-{
-    position: absolute;
-    width: 100%;
-}
-.menu__item__wrapper--top
-{
-    top: 1rem;
-}
-.menu__item__wrapper--mid
-{
-    top: 10.87rem;
-}
-.menu__item__wrapper--bottom
-{
-    bottom: 1rem;
-}
-.pageContent__text
-{
-
-    color: var(--black);
-    font-size: 2rem;
-    font-weight: 700;
-    line-height: 1;
-    position: relative;
-    left: 4rem;
-    margin: 0;
-}
-.pageContent__text.pageContent__text--msg
-{
-    color: var(--darkGrey);
-    font-size: 1rem;
-    font-weight: 500;
-    margin-top: 0.5rem;
-}
-
-.pageContent__text.pageContent__text--helloMsg
-{
-    margin-top: 3rem;
-}
-.pageContent__text.pageContent__text--pageName
-{
-    margin-top: 3rem;
-}
-
-
-.pageContent
-{
-    position: relative;
-    width: calc(100% - 17.5rem);
-    height: 100%;
-    float: right;
-    overflow-x:hidden;
-}
-
-.navBar
-{
-    position: absolute;
-    top: 3rem;
-    right: 4rem;
-    gap: 1rem;
-    display: flex;
-}
-
-.notification-icon
-{
-    content: url("icon-bell.svg");
-    cursor: pointer;
-}
-.notification-icon.red
-{
-    content: url("icon-bell-red.svg");
-}
-.notification-icon.yellow
-{
-    content: url("icon-bell-yellow.svg");
-}
-.notification-icon.green
-{
-    content: url("icon-bell-green.svg");
-}
-.profileBar
-{
-    gap:0.5rem;
-    display: flex;
-    align-items: center;
-}
-.profileBar__avatar
-{
-    width: 2rem;
-    height: 2rem;
-    border-radius: 2rem;
-    background-color: rgb(53, 53, 53);
-}
-.profileBar__name
-{
-    color: var(--black);
-    font-size: 0.875rem;
-    font-weight: 500;
-    cursor: pointer;
-}
-
-
-.standardButton
-{
-    position: absolute;
-    border-radius: 0.5rem;
-    width: 13.5rem;
-    background-color: var(--black);
-    color:var(--white);
-    padding: 0.94rem 1.5rem;
-    border: 0;
-    line-height: .625rem;
-    margin: 0;
-    font-size: 0.875rem;
-    font-weight: 500;
-    font-family: Poppins;
-    cursor: pointer;
-}
-
-.standardButton.standardButton--action
-{
-    color:var(--white)
-}
-
-.standardButton.standardButton--addServer
-{
-    right: 4rem;
-    top: 10rem;
-}
-
-.contentCard
-{
-    display: flex;
-    border-radius: 1rem;
-    border: 1px solid #D9D9D9;
-    background: #FFF;
-    padding: 0.75rem 1.5rem;
-    flex-direction: column;
-    align-items: flex-start;
-
-}
-
 .contentCard--serverList
 {
-    margin-top: 2rem;
-    margin-left: 4rem;
-    margin-right: 4rem;
-    margin-bottom: 2.5rem;
     max-height: 75%;
     overflow: auto;
 }
-
+.pageContent__block--settings
+{
+    display: flex;
+    gap: 1.5rem;
+    
+}
 .serverList
 {
     border-collapse: collapse;
     width: 100%;
 }
-
 .serverList__item
 {
     width: 100%;
@@ -241,21 +25,16 @@ body
     font-weight: 400;
     color:var(--black);
 }
-
-
 .serverList__item__first
 {
     width: 0;
     padding-right: 2rem;
     text-align: left;
 }
-
 .serverList__item--heading
 {
     font-weight: 600;
 }
-
-
 .serverList__item__second
 {
     text-align: left;
@@ -273,7 +52,6 @@ body
     text-align: right;
     cursor: pointer;
 }
-
 .serverList__status
 {
     width: 2.5rem;
@@ -299,11 +77,153 @@ body
 {
     background-color: var(--red);
 }
-
-
 .test
 {
     height: 120%;
     width: 10rem;
     background-color:aqua;
+}
+
+.modal
+{
+    display: none;
+    width: fit-content;
+    position:absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+.modal.active
+{
+    z-index: 10;
+    display: flex;
+}
+
+.modal__basicForm
+{
+    display: flex;
+    flex-direction: column;
+    width: 31.5rem;
+    height: fit-content;
+    border-radius: 1rem;
+    border: 1px solid #D9D9D9;
+    background: #FFF;
+    padding: 2rem;
+    gap: 2rem;
+}
+
+.modal__basicForm__content
+{
+    gap: 1.5rem;
+    display: flex;
+    flex-direction: column;
+}
+.basicForm__title
+{
+    font-size: 2rem;
+    font-weight: 600;
+    color:var(--black);
+}
+
+.Form__content__line
+{
+    gap: 0.75rem;
+    display: flex;
+    flex-direction: column;
+}
+.Form__content__line__title
+{
+    font-weight: 500;
+    font-size: 0.875rem;
+}
+.Form__content__line__error_msg
+{
+    display: none;
+}
+
+.Form__content__textInput
+{
+    display: flex;
+    height: 3rem;
+    padding: 1rem;
+    align-items: center;
+    align-self: stretch;
+    border-radius: 0.5rem;
+    border: 1px solid #E1E1E1;
+    background: var(--white);
+}
+
+.basicForm__buttonsWrapper
+{
+    display: flex;
+    gap: 1.5rem;
+}
+.basicForm__buttonsWrapper > *{
+    flex: 1 1 auto;
+    
+}
+
+.buttonsWrapper__button
+{
+    height: 2.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 0.5rem;
+    border: 0;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+
+.Form__content__line__title.line__title--radio
+{
+    margin-bottom: .25rem;
+}
+
+.Form__content__radioOptions
+{
+    display: flex;
+    gap: .5rem;
+} 
+
+.button--positive
+{
+    background-color: var(--black);
+    color: var(--white);
+    cursor: pointer;
+}
+
+.button--negative
+{
+    text-decoration: underline;
+    color: var(--black);
+}
+
+.Form__content__radioOptions__radioButton
+{
+    transform: scale(1.25);
+}
+
+
+.contentCard.contentCard--settingsBlock
+{
+    gap: .5rem;
+    flex-direction: column;
+    align-items: center;
+    width: 15rem;
+    text-align: center;
+}
+
+.settingsBlock__title
+{
+    font-weight: 500;
+    font-size: 1rem;
+    color: var(--black);
+}
+.settingsBlock__discription
+{
+    font-size: 0.75rem;
+    color: var(--grey);
+    font-weight: 400;
 }

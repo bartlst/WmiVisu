@@ -11,9 +11,15 @@ views = Blueprint('views', __name__)
 
 @views.route('/')
 def homePage():
-    return render_template("base.html")
+    return render_template("main_page.html")
 
 
 @views.route('/manage_servers')
 def manageServers():
     return render_template("manageServers.html")
+
+
+@views.route('/settings')
+def appSettings():
+    return render_template("setting_page.html")
+
