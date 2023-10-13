@@ -2,14 +2,16 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin, LoginManager
 from werkzeug.security import generate_password_hash, check_password_hash
-
-from os import path
-
+import os
 
 login_manager = LoginManager()
 db = SQLAlchemy()
 DB_NAME = "WMI.db"
 app = Flask(__name__)
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+PARENT_DIR = os.path.dirname(BASE_DIR)
+DATABASE_PATH = os.path.join(PARENT_DIR, f'instance/{DB_NAME}')
 
 
 def create_app():
@@ -35,13 +37,14 @@ def create_app():
 
 def create_database(app):
     from .models import User
-    if not path.exists(f'instance/{DB_NAME}'):
+    if not os.path.exists(DATABASE_PATH):
+        print(DATABASE_PATH)
         with app.app_context():
             db.create_all()
-            # new_user = User(email='admin@admin',
-            #                 password=generate_password_hash('admin', method='scrypt'),
-            #                 account_type='Admin',
-            #                 reset_password=False)
-            # db.session.add(new_user)
-            # db.session.commit()
+            new_user = User(username='adminWMI',
+                            password=generate_password_hash('adminWMI', method='scrypt'),
+                            account_type='Admin',
+                            reset_password=False)
+            db.session.add(new_user)
+            db.session.commit()
             print('Database created...')

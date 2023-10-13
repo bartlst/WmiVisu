@@ -1,20 +1,25 @@
-.contentCard--serverList
+.contentCard--tableList
 {
     max-height: 75%;
     overflow: auto;
+}
+.tableList--servicesStatus
+{
+    max-height: 19rem;
+    overflow-y: hidden;
 }
 .pageContent__block--settings
 {
     display: flex;
     gap: 1.5rem;
-    
+    flex-direction: column;
 }
-.serverList
+.tableList
 {
     border-collapse: collapse;
     width: 100%;
 }
-.serverList__item
+.tableList__item
 {
     width: 100%;
     height: 3rem;
@@ -23,36 +28,45 @@
     border-bottom: .0625rem solid var(--whiteStroke);
     font-size: 0.875rem;
     font-weight: 400;
+    text-align: center;
     color:var(--black);
 }
-.serverList__item__first
+
+.tableList__item__cell--serverName
 {
-    width: 0;
-    padding-right: 2rem;
+    width: 86%;
     text-align: left;
 }
-.serverList__item--heading
+
+.tableList__item__cell--username
 {
-    font-weight: 600;
-}
-.serverList__item__second
-{
+    width: 70%;
     text-align: left;
-    padding-right: 11rem;
-    width: 7rem;
 }
-.serverList__item__third
+
+.tableList__item__cell--config
 {
-    text-align: left;
-    width: fit-content;
-}
-.serverList__item__fourth
-{
-    width: 2rem;
-    text-align: right;
+    height: 1.5rem;
+    width: 1.5rem;
     cursor: pointer;
 }
-.serverList__status
+
+.serverNameWrapper
+{
+    display: flex;
+    align-items: center;
+    gap:.5rem;
+}
+
+.statusDot
+{
+    border-radius: 50%;
+    width: 0.35rem;
+    height: 0.35rem;
+    background-color: var(--darkGrey);
+}
+
+.statusIcon
 {
     width: 2.5rem;
     height: 2.5rem;
@@ -65,24 +79,19 @@
     color: var(--black);
     font-weight: 600;
 }
-.serverList__status.green
+.green
 {
     background-color: var(--green);
 }
-.serverList__status.yellow
+.yellow
 {
     background-color: var(--yellow);
 }
-.serverList__status.red
+.red
 {
     background-color: var(--red);
 }
-.test
-{
-    height: 120%;
-    width: 10rem;
-    background-color:aqua;
-}
+
 
 .modal
 {
@@ -213,6 +222,7 @@
     align-items: center;
     width: 15rem;
     text-align: center;
+    cursor: pointer;
 }
 
 .settingsBlock__title
@@ -226,4 +236,79 @@
     font-size: 0.75rem;
     color: var(--grey);
     font-weight: 400;
+}
+
+
+.dashboard__sectionTwo__content
+{
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.contentCard--serverUsage
+{
+    display: flex;
+    width: 20rem;
+    font-size: .75rem;
+}
+
+
+.tableList__item__serverList__cell--status
+{
+    width: 5rem;
+}
+
+.tableList__item__serverList__cell--serverName
+{
+    width: 20rem;
+}
+
+
+.tableList__item__serverList__cell--config
+{
+    width: 1rem;
+}
+
+.tableList--serverList
+{
+    text-align: left;
+}
+
+.statusIcon--center
+{
+    margin:auto;
+}
+
+.tableList th
+{
+    font-weight: 600;
+}
+
+.serverUsage__header
+{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
+
+.settings__section
+{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.settings__section__title
+{
+    color: var(--black);
+    font-size: 1.25rem;
+    font-weight: 500;
+    line-height: 1;
+}
+.settings__section__content
+{
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
 }

@@ -16,4 +16,14 @@ def load_user(user_id):
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
-    return render_template("/login.html", user=current_user)
+    if request.method == 'POST':
+        print(request.form.to_dict())
+        username = request.form.get('username')
+        password = request.form.get('password')
+
+        user = User.query.filter_by(username=username).first()
+        if user:
+            if check_password_hash(user.password, password):
+                login_user(user)
+
+    return render_template("/login.html")

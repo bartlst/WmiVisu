@@ -22,9 +22,9 @@
             <button class="menu__item menu__item--logo"><img src="{{url_for('static', filename='logo.svg')}}" alt="">WMI Checker</button>
         </div>
         <div class="menu__item__wrapper menu__item__wrapper--mid">
-            <a class="hiddenA" href="/"><button id="dashboard" class="menu__item menu__item--button"><img src="{{url_for('static', filename='icon-dashboard.svg')}}" alt="">Dashboard</button></a>
-            <a class="hiddenA" href="/manage_servers"><button id="manageServers" class="menu__item menu__item--button"><img src="{{url_for('static', filename='icon-dashboard-add.svg')}}" alt="">Manage servers</button></a>
-            <a class="hiddenA" href="/settings"><button id="settings" class="menu__item menu__item--button"><img src="{{url_for('static', filename='icon-settings.svg')}}" alt="">Settings</button></a>
+            <a class="hiddenA" href="/"><button id="dashboard" class="menu__item menu__item--button"><!--<img src="{{url_for('static', filename='icon-dashboard.svg')}}" alt="">-->Dashboard</button></a>
+            <a class="hiddenA" href="/manage_servers"><button id="manageServers" class="menu__item menu__item--button"><!--<img src="{{url_for('static', filename='icon-dashboard-add.svg')}}" alt="">-->Manage servers</button></a>
+            <a class="hiddenA" href="/settings"><button id="settings" class="menu__item menu__item--button"><!--<img src="{{url_for('static', filename='icon-settings.svg')}}" alt="">-->Settings</button></a>
         </div>
         <div class="menu__item__wrapper menu__item__wrapper--bottom">
             <button class="menu__item menu__item--button"><img src="{{url_for('static', filename='icon-log-off.svg')}}" alt="">Log off</button>
@@ -32,9 +32,9 @@
     </div>
 
     <div class="pageContent">
-        <div class="pageContent__text pageContent__text--helloMsg">Hi John,</div>
+        <div class="pageContent__text pageContent__text--helloMsg">Hi {{user.username}},</div>
         <div class="pageContent__text pageContent__text--msg">Check out server status</div>
-        <div class="pageContent__text pageContent__text--pageName">{% block subPageTitle %}Home{% endblock %}</div>
+        <h1 class="pageContent__text pageContent__text--pageName">{% block subPageTitle %}Home{% endblock %}</h1>
         <div class="navBar">
             <div class="notification-icon"></div>
             <div class="profileBar">
@@ -43,7 +43,7 @@
             </div>
         </div>
         {% block contener%}{% endblock %}
-        <div class="modal">
+        
             {% block modalContener%}{% endblock %}
         </div>
     </div>
