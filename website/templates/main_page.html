@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block subPageTitle %}Services status{% endblock %}
+
+{% block contener%}
+<div class="dashboard__sectionOne">
+    <div class="contentCard contentCard--tableList tableList--servicesStatus">
+        <table class="tableList">
+            <tr class="tableList__item">
+                <th class="tableList__item__cell--serverName">Server name</th>
+                <th>OK</th>
+                <th>W</th>
+                <th>C</th>
+            </tr>
+            <tr class="tableList__item">
+                <td class="tableList__item__cell--serverName"> 
+                    <div class="serverNameWrapper">
+                        <div class="statusDot green"></div> 
+                        nazwa serwera.128973128937.com.pl
+                    </div>
+                </td>
+                <td><div class="statusIcon statusIcon--center green">12</div></td>
+                <td><div class="statusIcon statusIcon--center yellow">12</div></td>
+                <td><div class="statusIcon statusIcon--center red">12</div></td>
+                <td><img class="tableList__item__cell--config" src="{{url_for('static', filename='icon-menu.svg')}}" alt=""></th>
+            </tr>
+            <tr class="tableList__item">
+                <td class="tableList__item__cell--serverName"> <div class="serverNameWrapper"><div class="statusDot green"></div> nazwa serwera.128973128937.com.pl</div></td>
+                <td><div class="statusIcon statusIcon--center green">12</div></td>
+                <td><div class="statusIcon statusIcon--center yellow">12</div></td>
+                <td><div class="statusIcon statusIcon--center red">12</div></td>
+                <td><img class="tableList__item__cell--config" src="{{url_for('static', filename='icon-menu.svg')}}" alt=""></th>
+            </tr>
+            <tr class="tableList__item">
+                <td class="tableList__item__cell--serverName"> <div class="serverNameWrapper"><div class="statusDot green"></div> nazwa serwera.128973128937.com.pl</div></td>
+                <td><div class="statusIcon statusIcon--center green">12</div></td>
+                <td><div class="statusIcon statusIcon--center yellow">12</div></td>
+                <td><div class="statusIcon statusIcon--center red">12</div></td>
+                <td><img class="tableList__item__cell--config" src="{{url_for('static', filename='icon-menu.svg')}}" alt=""></th>
+            </tr>
+            <tr class="tableList__item">
+                <td class="tableList__item__cell--serverName"> <div class="serverNameWrapper"><div class="statusDot green"></div> nazwa serwera.128973128937.com.pl</div></td>
+                <td><div class="statusIcon statusIcon--center green">12</div></td>
+                <td><div class="statusIcon statusIcon--center yellow">12</div></td>
+                <td><div class="statusIcon statusIcon--center red">12</div></td>
+                <td><img class="tableList__item__cell--config" src="{{url_for('static', filename='icon-menu.svg')}}" alt=""></th>
+            </tr>
+            <tr class="tableList__item">
+                <td class="tableList__item__cell--serverName"> <div class="serverNameWrapper"><div class="statusDot green"></div> nazwa serwera.128973128937.com.pl</div></td>
+                <td><div class="statusIcon statusIcon--center green">12</div></td>
+                <td><div class="statusIcon statusIcon--center yellow">12</div></td>
+                <td><div class="statusIcon statusIcon--center red">12</div></td>
+                <td><img class="tableList__item__cell--config" src="{{url_for('static', filename='icon-menu.svg')}}" alt=""></th>
+            </tr>
+            <tr class="tableList__item">
+                <td class="tableList__item__cell--serverName"> <div class="serverNameWrapper"><div class="statusDot green"></div> nazwa serwera.128973128937.com.pl</div></td>
+                <td><div class="statusIcon statusIcon--center green">12</div></td>
+                <td><div class="statusIcon statusIcon--center yellow">12</div></td>
+                <td><div class="statusIcon statusIcon--center red">12</div></td>
+                <td><img class="tableList__item__cell--config" src="{{url_for('static', filename='icon-menu.svg')}}" alt=""></th>
+            </tr>
+            <tr class="tableList__item">
+                <td class="tableList__item__cell--serverName"> <div class="serverNameWrapper"><div class="statusDot green"></div> nazwa serwera.128973128937.com.pl</div></td>
+                <td><div class="statusIcon statusIcon--center green">12</div></td>
+                <td><div class="statusIcon statusIcon--center yellow">12</div></td>
+                <td><div class="statusIcon statusIcon--center red">12</div></td>
+                <td><img class="tableList__item__cell--config" src="{{url_for('static', filename='icon-menu.svg')}}" alt=""></th>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div class="dashboard__sectionTwo">
+    <h1 class="pageContent__text pageContent__text--pageName">Server usage</h1>
+    <div class="dashboard__sectionTwo__content">
+        <div class="contentCard contentCard--serverUsage">
+            <div class="serverUsage__header">
+                <div class="serverNameWrapper">
+                    nazwa serwera.128973128937.com.pl
+                    <div class="statusDot green"></div> 
+                </div>
+                <img class="tableList__item__cell--config" src="{{url_for('static', filename='icon-menu.svg')}}" alt="">
+            </div>
+        </div>
+        <div class="contentCard contentCard--serverUsage"></div>
+        <div class="contentCard contentCard--serverUsage"></div>
+        <div class="contentCard contentCard--serverUsage"></div>
+    </div>
+</div>
+<script>
+    //document.getElementById("dashboard").classList.add('active')
+</script>
+{% endblock %}
+
+{% block modalContener%}{% endblock %}

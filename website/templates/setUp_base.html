@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='basic-style.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename='global.css')}}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;1,400&display=swap"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@1,500&display=swap" rel="stylesheet">
+    <title>{% block title %}Home{% endblock %}</title>
+
+</head>
+<body>
+    <div class="body__overlay"></div>
+
+    <div class="pageContent pageContent--setup">
+    <div class="setup__logo"><div class="setup__logo__icon"><img src="{{url_for('static', filename='logo.svg')}}" alt=""></div>WMI Checker</div>
+        <div class="pageContent__centerContent">
+            {% block contener%}{% endblock %}
+        </div>
+        <div class="modal">
+            {% block modalContener%}{% endblock %}
+        </div>
+    </div>
+    <script
+    type="text/javascript"
+    src="{{url_for('static', filename='index.js')}}">
+    </script>
+</body>
+
+
+
+</html>

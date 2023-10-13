@@ -1,0 +1,31 @@
+{% extends "setUp_base.html" %}
+
+{% block contener%}
+
+
+<form method="POST" class="modal__basicForm">
+    <h2 class="basicForm__title">Login</h2>
+    
+    <div class="modal__basicForm__content">
+        <div class="Form__content__line">
+            <label class="Form__content__line__title" for="username">Username</label>
+            <input required type="text" class="Form__content__textInput" id="username" name="username">
+            <p class="Form__content__line__error_msg" id="email-error-msg"></p>
+        </div>
+        <div class="Form__content__line">
+            <label class="Form__content__line__title" for="password">Password</label>
+            <input required type="password" class="Form__content__textInput" id="password" name="password">
+            <p class="Form__content__line__error_msg" id="email-error-msg"></p>
+        </div>
+    </div>
+
+
+    <div class="basicForm__buttonsWrapper">
+        <button class="buttonsWrapper__button button--positive">Login</button>
+    </div>
+</form>
+
+
+{% endblock %}
+
+{% block modalContener%}{% endblock %}

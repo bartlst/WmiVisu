@@ -1,0 +1,384 @@
+{% extends "base.html" %}
+
+{% block subPageTitle %}Settings{% endblock %}
+{% block contener%}
+
+<div class="pageContent__block pageContent__block--settings">
+    <div class="settings__section"> 
+        <h2 class="settings__section__title">User Settings</h2>
+        <div class="settings__section__content">
+            <div class="contentCard contentCard--settingsBlock" onclick="showModal('addNewUser')">
+                <img class="settingsBlock__icon" src="{{url_for('static', filename='icon-user-plus.svg')}}" alt="">
+                <h2 class="settingsBlock__title">Add user</h2>
+                <h3 class="settingsBlock__discription">Here you can add another user.</h3>
+            </div>
+            <div class="contentCard contentCard--settingsBlock" onclick="showModal('manageUsers')">
+                <img class="settingsBlock__icon" src="{{url_for('static', filename='icon-users.svg')}}" alt="">
+                <h2 class="settingsBlock__title">Manage users</h2>
+                <h3 class="settingsBlock__discription">Here you can change your profile settings.</h3>
+            </div>
+        </div>
+    </div>
+    <div class="settings__section"> 
+        <h2 class="settings__section__title">Notifications</h2>
+        <div class="settings__section__content">
+            <div class="contentCard contentCard--settingsBlock">
+                <img class="settingsBlock__icon" src="{{url_for('static', filename='icon-mail-cog.svg')}}" alt="">
+                <h2 class="settingsBlock__title">Email</h2>
+                <h3 class="settingsBlock__discription">Here you can add another user.</h3>
+            </div>
+            <div class="contentCard contentCard--settingsBlock">
+                <img class="settingsBlock__icon" src="{{url_for('static', filename='icon-bell-cog.svg')}}" alt="">
+                <h2 class="settingsBlock__title">Alerts</h2>
+                <h3 class="settingsBlock__discription">Here you can change your profile settings.</h3>
+            </div>
+            <div class="contentCard contentCard--settingsBlock">
+                <img class="settingsBlock__icon" src="{{url_for('static', filename='icon-bell-search.svg')}}" alt="">
+                <h2 class="settingsBlock__title">Historical alerts</h2>
+                <h3 class="settingsBlock__discription">Here you can find all previous alerts.</h3>
+            </div>
+        </div>
+    </div>
+    <div class="settings__section"> 
+        <h2 class="settings__section__title">Database</h2>
+        <div class="settings__section__content">
+            <div class="contentCard contentCard--settingsBlock" onclick="showModal('addNewUser')">
+                <img class="settingsBlock__icon" src="{{url_for('static', filename='icon-api-key.svg')}}" alt="">
+                <h2 class="settingsBlock__title">API</h2>
+                <h3 class="settingsBlock__discription">Here you can find your API key.</h3>
+            </div>
+            <div class="contentCard contentCard--settingsBlock">
+                <img class="settingsBlock__icon" src="{{url_for('static', filename='icon-database-export.svg')}}" alt="">
+                <h2 class="settingsBlock__title">Backups</h2>
+                <h3 class="settingsBlock__discription">Here you can configure application's DB backup.</h3>
+            </div>
+            <div class="contentCard contentCard--settingsBlock">
+                <img class="settingsBlock__icon" src="{{url_for('static', filename='icon-file-time.svg')}}" alt="">
+                <h2 class="settingsBlock__title">Historical data</h2>
+                <h3 class="settingsBlock__discription">Here you can manage how long db keeps the data.</h3>
+            </div>
+        </div>
+    </div>
+    <div class="settings__section"> 
+        <h2 class="settings__section__title">Application</h2>
+        <div class="settings__section__content">
+            <div class="contentCard contentCard--settingsBlock" onclick="showModal('serviceUser')">
+                <img class="settingsBlock__icon" src="{{url_for('static', filename='icon-user-code.svg')}}" alt="">
+                <h2 class="settingsBlock__title">Service user</h2>
+                <h3 class="settingsBlock__discription">Here you can set or change application's user.</h3>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<div class="modal" id="addNewUser">
+    <form method="POST" class="modal__basicForm">
+        <input required id="addNewUser" name="formType" style="display: none;" value="addNewUser">
+        <h2 class="basicForm__title">Add new user</h2>
+        
+        <div class="modal__basicForm__content">
+            <div class="Form__content__line">
+                <label class="Form__content__line__title" for="username">Username</label>
+                <input maxlength="128" required type="text" class="Form__content__textInput" id="username" name="username">
+            </div>
+            <div class="Form__content__line">
+                <label class="Form__content__line__title" for="password">Password</label>
+                <input required type="password" minlength="8" class="Form__content__textInput" id="password" name="password">
+            </div>
+
+            <div class="Form__content__line">
+                <label class="Form__content__line__title line__title--radio" for="accountType">Acount type</label>
+                <div class="Form__content__radioOptions">
+                    <input class="Form__content__radioOptions__radioButton" type="radio" required id="user" name="accountType" value="user">
+                    <label for="user">User</label>
+                </div>
+                <div class="Form__content__radioOptions">
+                    <input class="Form__content__radioOptions__radioButton" type="radio" required id="admin" name="accountType" value="admin">
+                    <label for="admin">Admin</label>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="basicForm__buttonsWrapper">
+            <div class="buttonsWrapper__button button--negative"><a class="link" href="/settings">Cancel</a></div>
+            <button type="submit" class="buttonsWrapper__button button--positive">Add user</button>
+        </div>
+    </form>
+</div>
+<div class="modal" id="manageUsers">
+    <form method="" class="modal__basicForm">
+        <input required id="addNewUser" name="formType" style="display: none;" value="addNewUser">
+        <h2 class="basicForm__title">Manage users</h2>
+        
+        <table class="tableList">
+            <tr class="tableList__item">
+                <th class="tableList__item__cell--username">User name</th>
+            </tr>
+            <tr class="tableList__item">
+                <td class="tableList__item__cell--username">Administrator</td>
+                <td><img class="tableList__item__cell--config" src="{{url_for('static', filename='icon-settings-black.svg')}}" alt=""></th>
+                <td><img class="tableList__item__cell--config" src="{{url_for('static', filename='icon-password.svg')}}" alt=""></th>
+                <td><img class="tableList__item__cell--config" src="{{url_for('static', filename='icon-trash.svg')}}" alt=""></th>
+            </tr>
+        </table>
+
+        <div class="basicForm__buttonsWrapper">
+            <div class="buttonsWrapper__button button--negative"><a class="link" href="/settings">Cancel</a></div>
+        </div>
+    </form>
+</div>
+
+<div class="modal" id="emial">
+    <form method="POST" class="modal__basicForm">
+        <input required id="addNewUser" name="formType" style="display: none;" value="addNewUser">
+        <h2 class="basicForm__title">Add new user</h2>
+        
+        <div class="modal__basicForm__content">
+            <div class="Form__content__line">
+                <label class="Form__content__line__title" for="username">Username</label>
+                <input maxlength="128" required type="text" class="Form__content__textInput" id="username" name="username">
+            </div>
+            <div class="Form__content__line">
+                <label class="Form__content__line__title" for="password">Password</label>
+                <input required type="password" minlength="8" class="Form__content__textInput" id="password" name="password">
+            </div>
+
+            <div class="Form__content__line">
+                <label class="Form__content__line__title line__title--radio" for="accountType">Acount type</label>
+                <div class="Form__content__radioOptions">
+                    <input class="Form__content__radioOptions__radioButton" type="radio" required id="user" name="accountType" value="user">
+                    <label for="user">User</label>
+                </div>
+                <div class="Form__content__radioOptions">
+                    <input class="Form__content__radioOptions__radioButton" type="radio" required id="admin" name="accountType" value="admin">
+                    <label for="admin">Admin</label>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="basicForm__buttonsWrapper">
+            <div class="buttonsWrapper__button button--negative"><a class="link" href="/settings">Cancel</a></div>
+            <button type="submit" class="buttonsWrapper__button button--positive">Add user</button>
+        </div>
+    </form>
+</div>
+<div class="modal" id="alerts">
+    <form method="POST" class="modal__basicForm">
+        <input required id="addNewUser" name="formType" style="display: none;" value="addNewUser">
+        <h2 class="basicForm__title">Add new user</h2>
+        
+        <div class="modal__basicForm__content">
+            <div class="Form__content__line">
+                <label class="Form__content__line__title" for="username">Username</label>
+                <input maxlength="128" required type="text" class="Form__content__textInput" id="username" name="username">
+            </div>
+            <div class="Form__content__line">
+                <label class="Form__content__line__title" for="password">Password</label>
+                <input required type="password" minlength="8" class="Form__content__textInput" id="password" name="password">
+            </div>
+
+            <div class="Form__content__line">
+                <label class="Form__content__line__title line__title--radio" for="accountType">Acount type</label>
+                <div class="Form__content__radioOptions">
+                    <input class="Form__content__radioOptions__radioButton" type="radio" required id="user" name="accountType" value="user">
+                    <label for="user">User</label>
+                </div>
+                <div class="Form__content__radioOptions">
+                    <input class="Form__content__radioOptions__radioButton" type="radio" required id="admin" name="accountType" value="admin">
+                    <label for="admin">Admin</label>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="basicForm__buttonsWrapper">
+            <div class="buttonsWrapper__button button--negative"><a class="link" href="/settings">Cancel</a></div>
+            <button type="submit" class="buttonsWrapper__button button--positive">Add user</button>
+        </div>
+    </form>
+</div>
+<div class="modal" id="historicalAlerts">
+    <form method="POST" class="modal__basicForm">
+        <input required id="addNewUser" name="formType" style="display: none;" value="addNewUser">
+        <h2 class="basicForm__title">Add new user</h2>
+        
+        <div class="modal__basicForm__content">
+            <div class="Form__content__line">
+                <label class="Form__content__line__title" for="username">Username</label>
+                <input maxlength="128" required type="text" class="Form__content__textInput" id="username" name="username">
+            </div>
+            <div class="Form__content__line">
+                <label class="Form__content__line__title" for="password">Password</label>
+                <input required type="password" minlength="8" class="Form__content__textInput" id="password" name="password">
+            </div>
+
+            <div class="Form__content__line">
+                <label class="Form__content__line__title line__title--radio" for="accountType">Acount type</label>
+                <div class="Form__content__radioOptions">
+                    <input class="Form__content__radioOptions__radioButton" type="radio" required id="user" name="accountType" value="user">
+                    <label for="user">User</label>
+                </div>
+                <div class="Form__content__radioOptions">
+                    <input class="Form__content__radioOptions__radioButton" type="radio" required id="admin" name="accountType" value="admin">
+                    <label for="admin">Admin</label>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="basicForm__buttonsWrapper">
+            <div class="buttonsWrapper__button button--negative"><a class="link" href="/settings">Cancel</a></div>
+            <button type="submit" class="buttonsWrapper__button button--positive">Add user</button>
+        </div>
+    </form>
+</div>
+
+<div class="modal" id="api">
+    <form method="POST" class="modal__basicForm">
+        <input required id="addNewUser" name="formType" style="display: none;" value="addNewUser">
+        <h2 class="basicForm__title">Add new user</h2>
+        
+        <div class="modal__basicForm__content">
+            <div class="Form__content__line">
+                <label class="Form__content__line__title" for="username">Username</label>
+                <input maxlength="128" required type="text" class="Form__content__textInput" id="username" name="username">
+            </div>
+            <div class="Form__content__line">
+                <label class="Form__content__line__title" for="password">Password</label>
+                <input required type="password" minlength="8" class="Form__content__textInput" id="password" name="password">
+            </div>
+
+            <div class="Form__content__line">
+                <label class="Form__content__line__title line__title--radio" for="accountType">Acount type</label>
+                <div class="Form__content__radioOptions">
+                    <input class="Form__content__radioOptions__radioButton" type="radio" required id="user" name="accountType" value="user">
+                    <label for="user">User</label>
+                </div>
+                <div class="Form__content__radioOptions">
+                    <input class="Form__content__radioOptions__radioButton" type="radio" required id="admin" name="accountType" value="admin">
+                    <label for="admin">Admin</label>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="basicForm__buttonsWrapper">
+            <div class="buttonsWrapper__button button--negative"><a class="link" href="/settings">Cancel</a></div>
+            <button type="submit" class="buttonsWrapper__button button--positive">Add user</button>
+        </div>
+    </form>
+</div>
+<div class="modal" id="backups">
+    <form method="POST" class="modal__basicForm">
+        <input required id="addNewUser" name="formType" style="display: none;" value="addNewUser">
+        <h2 class="basicForm__title">Add new user</h2>
+        
+        <div class="modal__basicForm__content">
+            <div class="Form__content__line">
+                <label class="Form__content__line__title" for="username">Username</label>
+                <input maxlength="128" required type="text" class="Form__content__textInput" id="username" name="username">
+            </div>
+            <div class="Form__content__line">
+                <label class="Form__content__line__title" for="password">Password</label>
+                <input required type="password" minlength="8" class="Form__content__textInput" id="password" name="password">
+            </div>
+
+            <div class="Form__content__line">
+                <label class="Form__content__line__title line__title--radio" for="accountType">Acount type</label>
+                <div class="Form__content__radioOptions">
+                    <input class="Form__content__radioOptions__radioButton" type="radio" required id="user" name="accountType" value="user">
+                    <label for="user">User</label>
+                </div>
+                <div class="Form__content__radioOptions">
+                    <input class="Form__content__radioOptions__radioButton" type="radio" required id="admin" name="accountType" value="admin">
+                    <label for="admin">Admin</label>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="basicForm__buttonsWrapper">
+            <div class="buttonsWrapper__button button--negative"><a class="link" href="/settings">Cancel</a></div>
+            <button type="submit" class="buttonsWrapper__button button--positive">Add user</button>
+        </div>
+    </form>
+</div>
+<div class="modal" id="historicalData">
+    <form method="POST" class="modal__basicForm">
+        <input required id="addNewUser" name="formType" style="display: none;" value="addNewUser">
+        <h2 class="basicForm__title">Add new user</h2>
+        
+        <div class="modal__basicForm__content">
+            <div class="Form__content__line">
+                <label class="Form__content__line__title" for="username">Username</label>
+                <input maxlength="128" required type="text" class="Form__content__textInput" id="username" name="username">
+            </div>
+            <div class="Form__content__line">
+                <label class="Form__content__line__title" for="password">Password</label>
+                <input required type="password" minlength="8" class="Form__content__textInput" id="password" name="password">
+            </div>
+
+            <div class="Form__content__line">
+                <label class="Form__content__line__title line__title--radio" for="accountType">Acount type</label>
+                <div class="Form__content__radioOptions">
+                    <input class="Form__content__radioOptions__radioButton" type="radio" required id="user" name="accountType" value="user">
+                    <label for="user">User</label>
+                </div>
+                <div class="Form__content__radioOptions">
+                    <input class="Form__content__radioOptions__radioButton" type="radio" required id="admin" name="accountType" value="admin">
+                    <label for="admin">Admin</label>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="basicForm__buttonsWrapper">
+            <div class="buttonsWrapper__button button--negative"><a class="link" href="/settings">Cancel</a></div>
+            <button type="submit" class="buttonsWrapper__button button--positive">Add user</button>
+        </div>
+    </form>
+</div>
+
+<div class="modal" id="serviceUser">
+    <form method="POST" class="modal__basicForm">
+        <input required id="addNewUser" name="formType" style="display: none;" value="addNewUser">
+        <h2 class="basicForm__title">Current service user</h2>
+        <table class="tableList">
+            <tr class="tableList__item">
+                <th class="tableList__item__cell--username">User name</th>
+                <th class="tableList__item__cell--username">Status</th>
+            </tr>
+            <tr class="tableList__item">
+                <td class="tableList__item__cell--username">Administrator</td>
+                <td class="tableList__item__cell--username">Authenticated</td>
+            </tr>
+        </table>
+        <h2 class="basicForm__title">Set service user</h2>
+        <div class="modal__basicForm__content">
+            <div class="Form__content__line">
+                <label class="Form__content__line__title" for="username">Username</label>
+                <input maxlength="128" required type="text" class="Form__content__textInput" id="username" name="username">
+            </div>
+            <div class="Form__content__line">
+                <label class="Form__content__line__title" for="password">Password</label>
+                <input required type="password" minlength="8" class="Form__content__textInput" id="password" name="password">
+            </div>
+        </div>
+
+
+        <div class="basicForm__buttonsWrapper">
+            <div class="buttonsWrapper__button button--negative"><a class="link" href="/settings">Cancel</a></div>
+            <button type="submit" class="buttonsWrapper__button button--positive">Set user</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    //document.getElementById("settings").classList.add('active')
+</script>
+
+{% endblock %}
