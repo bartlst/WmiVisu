@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from flask_login import UserMixin, LoginManager
-from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import LoginManager
+from werkzeug.security import generate_password_hash
 import os
 
 login_manager = LoginManager()
@@ -32,7 +32,7 @@ def create_app():
     from .models import User
     create_database(app)
 
-    return app
+    return (app, db)
 
 
 def create_database(app):
@@ -48,3 +48,5 @@ def create_database(app):
             db.session.add(new_user)
             db.session.commit()
             print('Database created...')
+
+

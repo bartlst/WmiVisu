@@ -1,9 +1,28 @@
+from threading import Thread
 from website import create_app
+from application import wimchacker
 
+DEBUG=True
 app = create_app()
 
+def run_webApp():
+    app[0].run(debug=False)
+
 if __name__ == '__main__':
-    app.run(debug=True)
+
+    if not DEBUG:
+        thread = Thread(target=run_webApp)
+        thread.start()
+        with app[0].app_context():
+            wimchacker.app = app[0]
+            wimchacker.db = app[1]
+            wimchacker.run()
+    else:
+        app[0].run(debug=True)
+
+
+
+
 
 
 

@@ -27,9 +27,16 @@ class Servers(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     hostname = db.Column(db.String(128), unique=True)
-    ip_address = db.Column(db.String(15), unique=True)
-    connection_status = db.Column(db.Integer, unique=True)
+    connection_status = db.Column(db.Integer)
 
+    services = db.relationship('Spec_Service', backref='server')
+    os_specs = db.relationship('Spec_OS', backref='server')
+    motherboards = db.relationship('Spec_Motherboard', backref='server')
+    gpus = db.relationship('Spec_GPU', backref='server')
+    disks = db.relationship('Info_DiskMeasurements', backref='server')
+    watched_services = db.relationship('Spec_WatchedServices', backref='server')
+    measurements = db.relationship('Info_Measurements', backref='server')
+    networkAdapters = db.relationship('Spec_NetworkAdapter', backref='server')
 
 class Spec_OS(db.Model):
     __tablename__ = 'spec_os'
@@ -38,10 +45,8 @@ class Spec_OS(db.Model):
     server_id = db.Column(db.Integer, db.ForeignKey('servers.id'), nullable=False)
     os_name_version = db.Column(db.String(255), nullable=False)
     architecture = db.Column(db.String(10), nullable=False)
-    license_key = db.Column(db.String(255))
-    activation_status = db.Column(db.String(50))
     install_date = db.Column(db.DateTime, nullable=False)
-    last_boot_up_time = db.Column(db.DateTime, nullable=False)
+    last_update = db.Column(db.DateTime, nullable=False)
 
 
 class Spec_Motherboard(db.Model):
@@ -64,35 +69,14 @@ class Spec_GPU(db.Model):
     driver_version = db.Column(db.String(100), nullable=False)
 
 
-class Spec_NetworkInterface(db.Model):
-    __tablename__ = 'spec_networkinterface'
-
-    id = db.Column(db.Integer, primary_key=True)
-    server_id = db.Column(db.Integer, db.ForeignKey('servers.id'), nullable=False)
-    interface_name = db.Column(db.String(255), nullable=False)
-    ip_address = db.Column(db.String(50))
-    subnet_mask = db.Column(db.String(50))
-    gateway = db.Column(db.String(50))
-    mac_address = db.Column(db.String(50), nullable=False)
-    link_speed = db.Column(db.String(50))
-
-
-class Spec_Disk(db.Model):
-    __tablename__ = 'spec_disk'
-
-    id = db.Column(db.Integer, primary_key=True)
-    server_id = db.Column(db.Integer, db.ForeignKey('servers.id'), nullable=False)
-    disk_interface = db.Column(db.String(50), nullable=False)
-    disk_type = db.Column(db.String(50), nullable=False)
-    raid_configuration = db.Column(db.String(255))
-
-
 class Spec_WatchedServices(db.Model):
     __tablename__ = 'spec_watchedservices'
 
     id = db.Column(db.Integer, primary_key=True)
     server_id = db.Column(db.Integer, db.ForeignKey('servers.id'), nullable=False)
     name = db.Column(db.String(255), nullable=False)
+
+    service_statuses = db.relationship('Info_ServiceStatuses', backref='service')
 
 
 class Info_Measurements(db.Model):
@@ -102,24 +86,54 @@ class Info_Measurements(db.Model):
     server_id = db.Column(db.Integer, db.ForeignKey('servers.id'), nullable=False)
     measurement_date = db.Column(db.DateTime, default=db.func.current_timestamp())
     cpu_usage_pct = db.Column(db.Float)
-    ram_used_mb = db.Column(db.Integer)
-    ram_available_mb = db.Column(db.Integer)
-    network_sent_mb = db.Column(db.Integer)
-    network_received_mb = db.Column(db.Integer)
+    ram_used_pct = db.Column(db.Integer)
 
 
 class Info_DiskMeasurements(db.Model):
     __tablename__ = 'info_diskmeasurements'
 
     id = db.Column(db.Integer, primary_key=True)
-    disk_id = db.Column(db.Integer, db.ForeignKey('spec_disk.id'), nullable=False)
-    used_mb = db.Column(db.Integer, nullable=False)
-    available_mb = db.Column(db.Integer, nullable=False)
+    server_id = db.Column(db.Integer, db.ForeignKey('servers.id'), nullable=False)
+    disk_id = db.Column(db.String(3), nullable=False)
+    total_space = db.Column(db.Integer, nullable=False)
+    free_space = db.Column(db.Integer, nullable=False)
+    used_space = db.Column(db.Integer, nullable=False)
 
 
-class Info_ServiceStatuses(db.Model):
-    __tablename__ = 'info_servicestatuses'
+
+# Network adaptery są problematyczne
+class Spec_NetworkAdapter(db.Model):
+    __tablename__ = 'spec_network_adapter'
 
     id = db.Column(db.Integer, primary_key=True)
-    service_id = db.Column(db.Integer, db.ForeignKey('spec_watchedservices.id'), nullable=False)
-    status = db.Column(db.String(255), nullable=False)
+    server_id = db.Column(db.Integer, db.ForeignKey('servers.id'), nullable=False)
+    name = db.Column(db.String(255), nullable=False)
+    mac_address = db.Column(db.String(100), nullable=True)
+
+
+class NetworkAdapterUsage(db.Model):
+    __tablename__ = 'network_adapter_usage'
+
+    id = db.Column(db.Integer, primary_key=True)
+    adapter_id = db.Column(db.Integer, db.ForeignKey('spec_network_adapter.id'), nullable=False)
+    measurement_date = db.Column(db.DateTime, default=db.func.current_timestamp())
+    bytes_sent = db.Column(db.Integer, nullable=False)
+    bytes_received = db.Column(db.Integer, nullable=False)
+
+
+class Spec_Service(db.Model):
+    __tablename__ = 'spec_services'
+
+    id = db.Column(db.Integer, primary_key=True)
+    server_id = db.Column(db.Integer, db.ForeignKey('servers.id'), nullable=False)
+    name = db.Column(db.String(128), nullable=False)
+    watched = db.Column(db.Integer)
+
+
+class Info_Service(db.Model):
+    __tablename__ = 'info_services'
+
+    id = db.Column(db.Integer, primary_key=True)
+    service_id = db.Column(db.Integer, db.ForeignKey('spec_service.id'), nullable=False)
+    status = db.Column(db.String(50), nullable=False)
+    status_change_date = db.Column(db.DateTime, nullable=False)

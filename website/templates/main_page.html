@@ -12,59 +12,40 @@
                 <th>W</th>
                 <th>C</th>
             </tr>
+            {% for server in servers%}
             <tr class="tableList__item">
                 <td class="tableList__item__cell--serverName"> 
                     <div class="serverNameWrapper">
+                        {% if server.connection_status == 1%}
                         <div class="statusDot green"></div> 
-                        nazwa serwera.128973128937.com.pl
+                        {% else %}
+                        <div class="statusDot red"></div> 
+                        {% endif %}
+                        {{server.hostname}}
                     </div>
                 </td>
-                <td><div class="statusIcon statusIcon--center green">12</div></td>
-                <td><div class="statusIcon statusIcon--center yellow">12</div></td>
-                <td><div class="statusIcon statusIcon--center red">12</div></td>
-                <td><img class="tableList__item__cell--config" src="{{url_for('static', filename='icon-menu.svg')}}" alt=""></th>
+                <td><div host={{server.hostname}} dataType="servicesRunning" class="statusIcon statusIcon--center green">12</div></td>
+                <td><div host={{server.hostname}} dataType="servicesStopping" class="statusIcon statusIcon--center yellow">12</div></td>
+                <td><div host={{server.hostname}} dataType="servicesStopped" class="statusIcon statusIcon--center red">12</div></td>
+                <td><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-menu-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                    <path d="M4 6l16 0"></path>
+                    <path d="M4 12l16 0"></path>
+                    <path d="M4 18l16 0"></path>
+                </svg></th>
             </tr>
+            {% endfor%}
             <tr class="tableList__item">
                 <td class="tableList__item__cell--serverName"> <div class="serverNameWrapper"><div class="statusDot green"></div> nazwa serwera.128973128937.com.pl</div></td>
                 <td><div class="statusIcon statusIcon--center green">12</div></td>
                 <td><div class="statusIcon statusIcon--center yellow">12</div></td>
                 <td><div class="statusIcon statusIcon--center red">12</div></td>
-                <td><img class="tableList__item__cell--config" src="{{url_for('static', filename='icon-menu.svg')}}" alt=""></th>
-            </tr>
-            <tr class="tableList__item">
-                <td class="tableList__item__cell--serverName"> <div class="serverNameWrapper"><div class="statusDot green"></div> nazwa serwera.128973128937.com.pl</div></td>
-                <td><div class="statusIcon statusIcon--center green">12</div></td>
-                <td><div class="statusIcon statusIcon--center yellow">12</div></td>
-                <td><div class="statusIcon statusIcon--center red">12</div></td>
-                <td><img class="tableList__item__cell--config" src="{{url_for('static', filename='icon-menu.svg')}}" alt=""></th>
-            </tr>
-            <tr class="tableList__item">
-                <td class="tableList__item__cell--serverName"> <div class="serverNameWrapper"><div class="statusDot green"></div> nazwa serwera.128973128937.com.pl</div></td>
-                <td><div class="statusIcon statusIcon--center green">12</div></td>
-                <td><div class="statusIcon statusIcon--center yellow">12</div></td>
-                <td><div class="statusIcon statusIcon--center red">12</div></td>
-                <td><img class="tableList__item__cell--config" src="{{url_for('static', filename='icon-menu.svg')}}" alt=""></th>
-            </tr>
-            <tr class="tableList__item">
-                <td class="tableList__item__cell--serverName"> <div class="serverNameWrapper"><div class="statusDot green"></div> nazwa serwera.128973128937.com.pl</div></td>
-                <td><div class="statusIcon statusIcon--center green">12</div></td>
-                <td><div class="statusIcon statusIcon--center yellow">12</div></td>
-                <td><div class="statusIcon statusIcon--center red">12</div></td>
-                <td><img class="tableList__item__cell--config" src="{{url_for('static', filename='icon-menu.svg')}}" alt=""></th>
-            </tr>
-            <tr class="tableList__item">
-                <td class="tableList__item__cell--serverName"> <div class="serverNameWrapper"><div class="statusDot green"></div> nazwa serwera.128973128937.com.pl</div></td>
-                <td><div class="statusIcon statusIcon--center green">12</div></td>
-                <td><div class="statusIcon statusIcon--center yellow">12</div></td>
-                <td><div class="statusIcon statusIcon--center red">12</div></td>
-                <td><img class="tableList__item__cell--config" src="{{url_for('static', filename='icon-menu.svg')}}" alt=""></th>
-            </tr>
-            <tr class="tableList__item">
-                <td class="tableList__item__cell--serverName"> <div class="serverNameWrapper"><div class="statusDot green"></div> nazwa serwera.128973128937.com.pl</div></td>
-                <td><div class="statusIcon statusIcon--center green">12</div></td>
-                <td><div class="statusIcon statusIcon--center yellow">12</div></td>
-                <td><div class="statusIcon statusIcon--center red">12</div></td>
-                <td><img class="tableList__item__cell--config" src="{{url_for('static', filename='icon-menu.svg')}}" alt=""></th>
+                <td><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-menu-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                    <path d="M4 6l16 0"></path>
+                    <path d="M4 12l16 0"></path>
+                    <path d="M4 18l16 0"></path>
+                 </svg></th>
             </tr>
         </table>
     </div>
@@ -73,22 +54,120 @@
 <div class="dashboard__sectionTwo">
     <h1 class="pageContent__text pageContent__text--pageName">Server usage</h1>
     <div class="dashboard__sectionTwo__content">
+        {% for server in servers%}
         <div class="contentCard contentCard--serverUsage">
             <div class="serverUsage__header">
                 <div class="serverNameWrapper">
-                    nazwa serwera.128973128937.com.pl
+                    {% if server.connection_status == 1%}
                     <div class="statusDot green"></div> 
+                    {% else %}
+                    <div class="statusDot red"></div> 
+                    {% endif %}
+                    {{server.hostname}}
                 </div>
-                <img class="tableList__item__cell--config" src="{{url_for('static', filename='icon-menu.svg')}}" alt="">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-menu-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                    <path d="M4 6l16 0"></path>
+                    <path d="M4 12l16 0"></path>
+                    <path d="M4 18l16 0"></path>
+                </svg>
             </div>
+            <canvas host={{server.hostname}} dataType="chart" id="{{server.hostname}}-chart" width="400" height="200"></canvas>
+
         </div>
-        <div class="contentCard contentCard--serverUsage"></div>
-        <div class="contentCard contentCard--serverUsage"></div>
-        <div class="contentCard contentCard--serverUsage"></div>
+        {% endfor%}
     </div>
 </div>
 <script>
-    //document.getElementById("dashboard").classList.add('active')
+    var chartsInstances = {};
+
+    async function fetchData(hostname) 
+    {
+        let path = "/getServerData/"+hostname;
+        return new Promise(function (resolve, reject)
+        {
+            const xhttp = new XMLHttpRequest();
+            xhttp.onload = function()
+            {
+                resolve(JSON.parse(this.responseText));
+            };
+
+            xhttp.onerror = function()
+            {
+                reject(new Error("Network error"));
+            }
+            xhttp.open("GET", path, true);
+            xhttp.send();
+        })
+    }
+
+
+    async function showChartData(canvas, data) {
+        let ctx = canvas.getContext('2d');
+        if (chartsInstances[canvas.id]) {
+            chartsInstances[canvas.id].destroy();
+        }
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['CPU', 'Mem', 'Strg'],
+                datasets: [{
+                    data: [data["CPU"],data["MEM"],data["STRG"]], // Przekazywane dane jako argument funkcji
+                    backgroundColor: [
+                        'rgba(0, 0, 0, 0.5)', // kolor dla CPU
+                        'rgba(0, 0, 0, 0.5)', // kolor dla Mem
+                        'rgba(0, 0, 0, 0.5)' // kolor dla Strg
+                    ],
+                    borderColor: [
+                        'rgba(0, 0, 0, 1)',
+                        'rgba(0, 0, 0, 1)',
+                        'rgba(0, 0, 0, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 100
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false // Ukrywa legendę
+                    }
+                }
+            }
+        });
+        chartsInstances[canvas.id] = myChart;
+    }
+    
+
+
+    async function showServerData(hostname)
+    {
+        let data = await fetchData(hostname)
+        console.log(data)
+        let elements = document.querySelectorAll('[host="'+hostname+'"]')
+        elements.forEach(element=>{
+            let dataType = element.getAttribute("dataType");
+            console.log(dataType)
+            if(dataType == "chart")
+            {
+                showChartData(element, data)
+            }
+            else if(dataType == "servicesRunning")
+            {
+                element.innerHTML= 99
+            }
+        })
+    }
+
+ var hostList = {{ hostnames|safe }}
+ hostList.forEach(server=>{
+    showServerData(server)
+ })
 </script>
 {% endblock %}
 

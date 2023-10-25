@@ -68,7 +68,9 @@ select {
   }
 }
 
-
+tbody svg{
+  max-width: none;
+}
 
 
 :root {
