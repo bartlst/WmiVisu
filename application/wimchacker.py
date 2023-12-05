@@ -1,10 +1,12 @@
 import wmi
+import winrm
 from concurrent.futures import ThreadPoolExecutor
 import time
-from datetime import date
 import pythoncom
 from website.models import *
-from datetime import datetime, timedelta, timezone
+from datetime import datetime
+from sqlalchemy import func
+from requests.exceptions import ReadTimeout
 
 
 def convert_cim_date(cim_date_str):
@@ -20,254 +22,267 @@ def convert_cim_date(cim_date_str):
     return dt
 
 
+def ps_out_to_dict(output):
+    """
+    Parses the PowerShell output string into a list of dictionaries,
+    considering '|&' as the end marker of each value.
+
+    :param output: str - The PowerShell output as a string.
+    :return: list - A list of dictionaries with parsed data.
+    """
+    # Split the output into lines and remove empty lines
+    lines = [line.strip() for line in output.split('\n') if line.strip() and not line.startswith('-')]
+    # Extract the header names
+    headers = lines[0].split('|&')
+    headers = [header.strip() for header in headers if header.strip()]
+
+    # Create a list to store the parsed dictionaries
+    parsed_data = []
+
+    # Process the data lines
+    for line in lines[1:]:
+        # Split the line into values based on '|&' and strip whitespace
+        values = line.split('|&')
+        values = [value.strip() for value in values if value.strip()]
+
+        # Map the values to the headers in a dictionary and add to the list
+        if len(values) == len(headers):
+            data_dict = dict(zip(headers, values))
+            parsed_data.append(data_dict)
+
+    return parsed_data
+
+
+def ps_winrm_exec(file_name, session):
+    with open(file_name) as script_file:
+        script = script_file.read()
+        response = session.run_ps(script)
+
+        return response
+
+
 USERNAME = 'admin'
 PASSWORD = 'admin'
 app = None
 db = None
 
 
-def Client_WMI_check(host):
-    pythoncom.CoInitialize()
-    with app.app_context():
+def wmi_check(host):
+    with app.app_context():  # Utworzenie kontekstu aplikacji
+        append_to_db = []
+        session = winrm.Session(f'http://{host.hostname}:5985/wsman',
+                                auth=('admin', 'admin'),
+                                server_cert_validation='ignore',
+                                transport='ntlm')
+        session.protocol.read_timeout_sec = 45
+        session.protocol.operation_timeout_sec = 45
         try:
-            connection = wmi.WMI(computer=host.hostname)
-            host.connection_status = 1
-        except wmi.x_wmi as e:
-            print(e)
+            session.run_cmd('hostname')
+        except winrm.exceptions.InvalidCredentialsError as e:
+            host.connection_status = 2
+        except Exception as e:
             host.connection_status = 0
-            pythoncom.CoUninitialize()
-            return
 
-        gpu_list = []
-        disk_list = []
-        # specification
-        for info in connection.Win32_ComputerSystem():
-            pass
-            # print(info.name)
-
-        # OS
-
-        for os_info in connection.Win32_OperatingSystem():
-            os_name_version = os_info.Caption
-            architecture = os_info.OSArchitecture
-            install_date = convert_cim_date(os_info.InstallDate)
-            last_update = datetime.now()
-
-        spec_os = Spec_OS(
-            server_id=host.id,
-            os_name_version=os_name_version,
-            architecture=architecture,
-            install_date=install_date,
-            last_update=last_update
-        )
-
-        if len(host.os_specs) == 0:
-            db.session.add(spec_os)
-            db.session.commit()
         else:
-            last_insert = host.os_specs[-1]
-            if last_insert.os_name_version != spec_os.os_name_version:
-                if last_insert.architecture != spec_os.architecture:
-                    if last_insert.install_date != spec_os.install_date:
-                        db.session.add(spec_os)
-                        db.session.commit()
+            host.connection_status = 1
+            try:
+                os_ps1_response = ps_winrm_exec(file_name='./application/ps_scripts/os_info.ps1', session=session)
+                motherboard_ps1_response = ps_winrm_exec(file_name='./application/ps_scripts/motherboard_info.ps1', session=session)
+                gpu_ps1_response = ps_winrm_exec(file_name='./application/ps_scripts/gpu_info.ps1', session=session)
+                cpu_ps1_response = ps_winrm_exec(file_name='./application/ps_scripts/cpu_info.ps1', session=session)
+                ram_ps1_response = ps_winrm_exec(file_name='./application/ps_scripts/ram_info.ps1', session=session)
+                services_ps1_response = ps_winrm_exec(file_name='./application/ps_scripts/services.ps1', session=session)
+                disks_ps1_response = ps_winrm_exec(file_name='./application/ps_scripts/disk_measurements.ps1', session=session)
+                crm_ps1_response = ps_winrm_exec(file_name='./application/ps_scripts/cpu_ram_measurements.ps1', session=session)
+            except Exception as e:
+                return None
+            else:
+                # # Services
+                services = ps_out_to_dict(services_ps1_response.std_out.decode())
+                # print(services)
+                host_services = Spec_Service.query.filter_by(server_id=host.id).all()
+                host_services_dict = {service.name: service for service in host_services}
+                for service in services:
+                    if not service['Name'] in host_services_dict:
+                        new_service = Spec_Service(
+                            server_id=host.id,
+                            name=service['Name'],
+                            watched=0
+                        )
+                        append_to_db.append(new_service)
+                    else:
+                        check_service = host_services_dict[service['Name']]
+                        last_status = Info_Service.query.filter_by(service_id=check_service.id)\
+                            .order_by(Info_Service.status_change_date.desc()).first()
 
-        # Motherboard
+                        if not last_status or last_status.status != service['Status']:
+                            new_status = Info_Service(
+                                service_id=check_service.id,
+                                status=service['Status'],
+                                status_change_date=datetime.now()
+                            )
+                            append_to_db.append(new_status)
+                            # Add service status report
+                # # DISK
+                disks_measurement = ps_out_to_dict(disks_ps1_response.std_out.decode())
+                # print(disks_measurement)
+                # add measurement
+                for disk in disks_measurement:
+                    append_to_db.append(Info_DiskMeasurements(
+                                server_id=host.id,
+                                disk_id=disk['DiskID'],
+                                measurement_date=datetime.now(),
+                                total_space=disk['TotalSizeB'],
+                                used_space=disk['UsedSpaceB'],
+                                free_space=disk['FreeSpaceB']
+                            ))
 
-        for board in connection.Win32_BaseBoard():
-            manufacturer = board.Manufacturer
-            model = board.Product
-        for bios in connection.Win32_BIOS():
-            bios_version = bios.Version
+                # Specification
+                os = ps_out_to_dict(os_ps1_response.std_out.decode())
+                motherboard = ps_out_to_dict(motherboard_ps1_response.std_out.decode())
+                gpu = ps_out_to_dict(gpu_ps1_response.std_out.decode())
+                cpu = ps_out_to_dict(cpu_ps1_response.std_out.decode())
+                ram = ps_out_to_dict(ram_ps1_response.std_out.decode())
 
-        motherboard = Spec_Motherboard(
-            server_id=host.id,
-            manufacturer=manufacturer,
-            model=model,
-            bios_version=bios_version
-        )
-        if len(host.motherboards) == 0:
-            db.session.add(motherboard)
-            db.session.commit()
-        else:
-            last_insert = host.motherboards[-1]
-            if last_insert.manufacturer != motherboard.manufacturer:
-                if last_insert.model != motherboard.model:
-                    if last_insert.bios_version != motherboard.bios_version:
-                        db.session.add(motherboard)
-                        db.session.commit()
-
-        # GUP
-
-        for video_card in connection.Win32_VideoController():
-            gpu_name = video_card.Name
-            gpu_memory_size = float(video_card.AdapterRAM) / (1024 ** 2)
-            gpu_driver_version = video_card.DriverVersion
-
-            gpu_list.append({
-                "gpu_name": gpu_name,
-                "gpu_memory_size": gpu_memory_size,
-                "gpu_driver_version": gpu_driver_version
-            })
-        if len(host.gpus) == 0:
-            for gpu in gpu_list:
-                spec_gpu = Spec_GPU(
+                specification = Specification(
                     server_id=host.id,
-                    name=gpu['gpu_name'],
-                    memory_size=gpu['gpu_memory_size'],
-                    driver_version=gpu['gpu_driver_version'],
+                    os=str(os),
+                    motherboard=str(motherboard),
+                    cpu=str(cpu),
+                    ram=str(ram),
+                    gpu=str(gpu),
+                    disk=str([{"ID": disk['DiskID'], 'Size': disk['TotalSizeB']} for disk in disks_measurement]),
                 )
-                db.session.add(spec_gpu)
-                db.session.commit()
-        else:
-            for gpu in gpu_list:
-                existing_gpu = next((x for x in host.gpus if (x.name == gpu['gpu_name']
-                                                              or x.memory_size == gpu['gpu_memory_size']
-                                                              or x.driver_version == gpu['gpu_driver_version'])), None)
+                if len(host.specification) == 0:
+                    append_to_db.append(specification)
+                elif (str(host.specification[-1].os) != specification.os or
+                      str(host.specification[-1].motherboard) != specification.motherboard or
+                      str(host.specification[-1].cpu) != specification.cpu or
+                      str(host.specification[-1].ram) != specification.ram or
+                      str(host.specification[-1].gpu) != specification.gpu or
+                      str(host.specification[-1].disk) != specification.disk):
+                    append_to_db.append(specification)
 
-                if not existing_gpu:
-                    spec_gpu = Spec_GPU(
+                # CPU RAM PROC Measurement
+                cr_measurement = ps_out_to_dict(crm_ps1_response.std_out.decode())
+                # print(cr_measurement)
+                # print(cr_measurement)
+                # add measurement
+                append_to_db.append(
+                    Info_Measurements(
                         server_id=host.id,
-                        name=gpu['gpu_name'],
-                        memory_size=gpu['gpu_memory_size'],
-                        driver_version=gpu['gpu_driver_version'],
+                        measurement_date=datetime.now(),
+                        cpu_usage_pct=cr_measurement[0]['CPUUsagePercent'],
+                        ram_used_pct=cr_measurement[0]['RAMUsedPercent']
                     )
-                    db.session.add(spec_gpu)
-                    db.session.commit()
-
-        # Networks adapters
-
-        # network_adapter_list = []
-        #
-        # for adapter in connection.Win32_NetworkAdapter():
-        #     adapter_name = adapter.Name
-        #     mac_address = adapter.MACAddress
-        #
-        #     network_adapter_list.append({
-        #         "adapter_name": adapter_name,
-        #         "mac_address": mac_address
-        #     })
-        #
-        # if len(host.networkAdapters) == 0:
-        #     for adapter in network_adapter_list:
-        #         spec_adapter = Spec_NetworkAdapter(
-        #             server_id=host.id,
-        #             name=adapter['adapter_name'],
-        #
-        #             mac_address=adapter['mac_address'],
-        #         )
-        #         db.session.add(spec_adapter)
-        #         db.session.commit()
-        #
-        # else:
-        #     for adapter in network_adapter_list:
-        #         existing_adapter = next((x for x in host.networkAdapters if (x.name == adapter['adapter_name']
-        #                                                                       or x.mac_address == adapter[
-        #                                                                           'mac_address'])), None)
-        #
-        #         if not existing_adapter:
-        #             spec_adapter = Spec_NetworkAdapter(
-        #                 server_id=host.id,
-        #                 name=adapter['adapter_name'],
-        #                 mac_address=adapter['mac_address'],
-        #             )
-        #             db.session.add(spec_adapter)
-        #             db.session.commit()
-        #
-        # for adapter in connection.Win32_PerfRawData_Tcpip_NetworkInterface():
-        #     matching_adapter = next((a for a in host.networkAdapters if a.name == adapter.Name), None)
-        #     print('+')
-        #     if matching_adapter:
-        #         usage = NetworkAdapterUsage(
-        #             adapter_id=matching_adapter.id,
-        #             bytes_sent=adapter.BytesSentPerSec,
-        #             bytes_received=adapter.BytesReceivedPerSec
-        #         )
-        #         # print(usage)
-        #         db.session.add(usage)
-        #         db.session.commit()
-        #         print('a')
-
-        for service in connection.Win32_Service():
-            check_service = Info_Service.query.filter_by(name=service.Name).first()
-            if not check_service:
-                new_service = Info_Service(
-                    server_id=host.id,
-                    name=service.Name,
-                    status=service.State,
-                    status_change_date=datetime.now()
                 )
-                db.session.add(new_service)
-            elif check_service.status != service.State:
-                new_service = Info_Service(
-                    server_id=host.id,
-                    name=service.Name,
-                    status=service.State,
-                    status_change_date=datetime.now()
-                )
-                db.session.add(new_service)
-
-
-        # DISK
-
-        for disk in connection.Win32_LogicalDisk(DriveType=3):
-            if disk.Size and disk.FreeSpace:
-                total_space = float(disk.Size)
-                free_space = float(disk.FreeSpace)
-                used_space = total_space - free_space
-
-
-                newDiskMeasurements = Info_DiskMeasurements(
-                    server_id=host.id,
-                    disk_id=disk.DeviceID,
-                    total_space=total_space,
-                    used_space=used_space,
-                    free_space=free_space
-                )
-                db.session.add(newDiskMeasurements)
+                for item in append_to_db:
+                    db.session.add(item)
                 db.session.commit()
 
-        # RAM CPU
 
-        for processor in connection.Win32_PerfFormattedData_PerfOS_Processor():
-            if processor.Name == "_Total":
-                average_processor_usage = int(processor.PercentProcessorTime)
-                break
+def notification_check(host):
+    append_to_db = []
+    # Services
+    watched_services = Spec_Service.query.filter_by(server_id=host.id, watched=1).all()
+    for service in watched_services:
+        last_status = sorted(service.info, key=lambda x: x.status_change_date, reverse=True)[0]
+        last_notification = Notification.query.filter_by\
+            (server_id=host.id, content=f'Service: {service.name} is {last_status.status}.', resolved=0).first()
+        if last_status.status != 'Running':
+            if not last_notification:
+                print(last_notification)
+                append_to_db.append(Notification(
+                    content=f'Service: {service.name} is {last_status.status}.',
+                    server_id=host.id,
+                    cause_type='Service',
+                    resolved=0,
+                    date=datetime.now()
+                ))
+        elif last_notification:
+            last_notification.resolved = 1
 
-        # Pobieranie informacji o zużyciu RAMu
-        for os in connection.Win32_OperatingSystem():
-            total_physical_memory = int(os.TotalVisibleMemorySize)
-            free_physical_memory = int(os.FreePhysicalMemory)
-            used_memory = total_physical_memory - free_physical_memory
-            used_memory_percentage = (used_memory / total_physical_memory) * 100
+    # CPU
+    # RAM
+    avg_cpu_usage = 0
+    avg_ram_usage = 0
+    last_measurements = Info_Measurements.query.filter_by(server_id=host.id).\
+        order_by(Info_Measurements.measurement_date.desc()).limit(5)
+    for measurement in last_measurements:
+        avg_cpu_usage += float(measurement.cpu_usage_pct)
+        avg_ram_usage += float(measurement.ram_used_pct)
+    avg_cpu_usage = avg_cpu_usage/5
+    avg_ram_usage = avg_ram_usage/5
+    last_cpu_notification = Notification.query.filter_by(server_id=host.id, cause_type='CPU usage', resolved=0).first()
+    if avg_cpu_usage > 70:
+        if not last_cpu_notification:
+            append_to_db.append(Notification(
+                content=f'CPU usage is {avg_cpu_usage}%.',
+                server_id=host.id,
+                cause_type='CPU usage',
+                resolved=0,
+                date=datetime.now()
+            ))
+    elif last_cpu_notification:
+        last_cpu_notification.resolved = 1
+    last_ram_notification = Notification.query.filter_by(server_id=host.id, cause_type='RAM usage', resolved=0).first()
+    if avg_ram_usage > 70 :
+        if not last_ram_notification:
+            append_to_db.append(Notification(
+                content=f'RAM usage is {avg_ram_usage}%.',
+                server_id=host.id,
+                cause_type='RAM usage',
+                resolved=0,
+                date=datetime.now()
+            ))
+    elif last_ram_notification:
+        last_ram_notification.resolved = 1
+    # DISK
+    unique_disk_ids = db.session.query(Info_DiskMeasurements.disk_id).filter(
+        Info_DiskMeasurements.server_id == host.id
+    ).distinct().all()
 
-        new_measurement = Info_Measurements(
-            server_id=host.id,
-            measurement_date=datetime.now(),
-            cpu_usage_pct=average_processor_usage,
-            ram_used_pct=round(used_memory_percentage, 2)
-        )
-
-        db.session.add(new_measurement)
-        db.session.commit()
-
-        pythoncom.CoUninitialize()
-
-
-def run():
+    for disk in unique_disk_ids:
+        last_measurement = Info_DiskMeasurements.query.filter_by(disk_id=disk.disk_id).\
+            order_by(Info_DiskMeasurements.measurement_date.desc()).first()
+        used_space = int(last_measurement.used_space)
+        total_space = int(last_measurement.total_space)
+        last_notification = Notification.query.filter_by \
+            (server_id=host.id, cause_type=f'Disk {disk.disk_id} occupancy', resolved=0).first()
+        if used_space/total_space > 0.7:
+            if not last_notification:
+                append_to_db.append(Notification(
+                    content=f'Disk {disk.disk_id} is {round(used_space/total_space)*100}% occupied.',
+                    server_id=host.id,
+                    cause_type=f'Disk {disk.disk_id} occupancy',
+                    resolved=0,
+                    date=datetime.now()
+                ))
+        elif last_notification:
+            last_notification.resolved = 1
+    for item in append_to_db:
+        db.session.add(item)
     db.session.commit()
+def run():
+
     while True:
+        remove = Servers.query.filter_by(remove=1).all()
+        if len(remove) != 0:
+            Servers.query.filter_by(remove=1).delete()
+            db.session.commit()
+
         servers = Servers.query.all()
         if len(servers) != 0:
-            # Client_WMI_check(servers[0])
             with ThreadPoolExecutor(max_workers=len(servers)) as worker:
-                futures = [worker.submit(Client_WMI_check, server) for server in servers]
-
-            # Po zakończeniu wszystkich wątków dokonujemy zapisu w bazie danych.
-            db.session.commit()
-
+                servers_response = [worker.submit(wmi_check, server) for server in servers]
+                for future in servers_response:
+                    try:
+                        server_data = future.result()
+                    except Exception as e:
+                        print(f'ERROR: {e}')
+            for server in servers:
+                notification_check(server)
             time.sleep(10)
         else:
             time.sleep(10)
-
             print('lack of servers')

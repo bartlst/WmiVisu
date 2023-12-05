@@ -2,7 +2,7 @@ from threading import Thread
 from website import create_app
 from application import wimchacker
 
-DEBUG=True
+DEBUG = False
 app = create_app()
 
 def run_webApp():
@@ -34,16 +34,11 @@ if __name__ == '__main__':
 # import sys
 #
 # # Funkcja do łączenia się z serwerami
-# def connect_to_servers():
-#     # Tu umieść swój kod odpowiedzialny za łączenie się z serwerami.
-#     pass
 #
-# # Kod aplikacji Flask.
 # from website import create_app
 # app = create_app()
 #
 #
-# # Klasa reprezentująca usługę Windows.
 # class MyService(win32serviceutil.ServiceFramework):
 #     # Nazwa wewnętrzna usługi.
 #     _svc_name_ = 'MyFlaskWMI'

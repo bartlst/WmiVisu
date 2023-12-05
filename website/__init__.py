@@ -25,9 +25,11 @@ def create_app():
 
     from .views import views
     from .auth import auth
+    from .api import api
 
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')
+    app.register_blueprint(api, url_prefix='/api')
 
     from .models import User
     create_database(app)
@@ -45,8 +47,7 @@ def create_database(app):
                             password=generate_password_hash('adminWMI', method='scrypt'),
                             account_type='Admin',
                             reset_password=False)
+            new_user.generate_api_key()
             db.session.add(new_user)
             db.session.commit()
             print('Database created...')
-
-

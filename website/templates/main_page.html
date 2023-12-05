@@ -8,46 +8,57 @@
         <table class="tableList">
             <tr class="tableList__item">
                 <th class="tableList__item__cell--serverName">Server name</th>
-                <th>OK</th>
-                <th>W</th>
-                <th>C</th>
+                <th><div class="statusIcon statusIcon--center">R</div></th>
+                <td><div class="statusIcon statusIcon--center">O</div></td>
+                <td><div class="statusIcon statusIcon--center">S</div></td>
+                <th><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" ></svg></th>
+                <th><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" ></svg></th>
             </tr>
+            
+            </table>
+            
             {% for server in servers%}
-            <tr class="tableList__item">
-                <td class="tableList__item__cell--serverName"> 
-                    <div class="serverNameWrapper">
-                        {% if server.connection_status == 1%}
-                        <div class="statusDot green"></div> 
-                        {% else %}
-                        <div class="statusDot red"></div> 
+            <table class="tableList">
+                <tr class="tableList__item" id="{{server.hostname}}_item">
+                    <td class="tableList__item__cell--serverName"> 
+                        <div class="serverNameWrapper">
+                            {% if server.connection_status == 1%}
+                            <div class="statusDot green"></div> 
+                            {% else %}
+                            <div class="statusDot red"></div> 
+                            {% endif %}
+                            {{server.hostname}}
+                        </div>
+                    </td>
+                    <td><div host={{server.hostname}} dataType="servicesRunning" class="statusIcon statusIcon--center green">0</div></td>
+                    <td><div host={{server.hostname}} dataType="servicesOthersStatus" class="statusIcon statusIcon--center yellow">0</div></td>
+                    <td><div host={{server.hostname}} dataType="servicesStopped" class="statusIcon statusIcon--center red">0</div></td>
+                    <td><svg xmlns="http://www.w3.org/2000/svg" onclick="showSubTable('{{server.hostname}}_item', '{{server.hostname}}_test')" class="icon icon-tabler icon-tabler-menu-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M4 6l16 0"></path>
+                        <path d="M4 12l16 0"></path>
+                        <path d="M4 18l16 0"></path>
+                    </svg></th>
+                    <td><a class="link" href="overview/{{server.hostname}}"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-table-shortcut" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M3 13v-8a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-8"></path>
+                        <path d="M3 10h18"></path>
+                        <path d="M10 3v11"></path>
+                        <path d="M2 22l5 -5"></path>
+                        <path d="M7 21.5v-4.5h-4.5"></path>
+                     </svg></a></td>
+                </tr>
+            </table>
+            <div class="tableList__item subTable" id="{{server.hostname}}_test" style="display: none;">
+                <table class="tableList subTable">
+                    {% for service in server.services%}
+                        {% if service.watched == 1 %}
+                            <tr class="subTable__item"> <td> <div class="serverNameWrapper"><div class="statusDot" host={{server.hostname}} dataType="serviceStatus" service={{service.name}}></div>{{service.name}}</td> </div></tr>
                         {% endif %}
-                        {{server.hostname}}
-                    </div>
-                </td>
-                <td><div host={{server.hostname}} dataType="servicesRunning" class="statusIcon statusIcon--center green">12</div></td>
-                <td><div host={{server.hostname}} dataType="servicesStopping" class="statusIcon statusIcon--center yellow">12</div></td>
-                <td><div host={{server.hostname}} dataType="servicesStopped" class="statusIcon statusIcon--center red">12</div></td>
-                <td><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-menu-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <path d="M4 6l16 0"></path>
-                    <path d="M4 12l16 0"></path>
-                    <path d="M4 18l16 0"></path>
-                </svg></th>
-            </tr>
+                    {% endfor%}
+                </table>
+            </div>
             {% endfor%}
-            <tr class="tableList__item">
-                <td class="tableList__item__cell--serverName"> <div class="serverNameWrapper"><div class="statusDot green"></div> nazwa serwera.128973128937.com.pl</div></td>
-                <td><div class="statusIcon statusIcon--center green">12</div></td>
-                <td><div class="statusIcon statusIcon--center yellow">12</div></td>
-                <td><div class="statusIcon statusIcon--center red">12</div></td>
-                <td><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-menu-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <path d="M4 6l16 0"></path>
-                    <path d="M4 12l16 0"></path>
-                    <path d="M4 18l16 0"></path>
-                 </svg></th>
-            </tr>
-        </table>
     </div>
 </div>
 
@@ -65,12 +76,14 @@
                     {% endif %}
                     {{server.hostname}}
                 </div>
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-menu-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <path d="M4 6l16 0"></path>
-                    <path d="M4 12l16 0"></path>
-                    <path d="M4 18l16 0"></path>
-                </svg>
+            <a class="link" href="overview/{{server.hostname}}"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-table-shortcut" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                <path d="M3 13v-8a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-8"></path>
+                <path d="M3 10h18"></path>
+                <path d="M10 3v11"></path>
+                <path d="M2 22l5 -5"></path>
+                <path d="M7 21.5v-4.5h-4.5"></path>
+             </svg></a>
             </div>
             <canvas host={{server.hostname}} dataType="chart" id="{{server.hostname}}-chart" width="400" height="200"></canvas>
 
@@ -80,6 +93,7 @@
 </div>
 <script>
     var chartsInstances = {};
+    var hostList = {{ hostnames|safe }}
 
     async function fetchData(hostname) 
     {
@@ -112,11 +126,11 @@
             data: {
                 labels: ['CPU', 'Mem', 'Strg'],
                 datasets: [{
-                    data: [data["CPU"],data["MEM"],data["STRG"]], // Przekazywane dane jako argument funkcji
+                    data: data, // Przekazywane dane jako argument funkcji
                     backgroundColor: [
                         'rgba(0, 0, 0, 0.5)', // kolor dla CPU
-                        'rgba(0, 0, 0, 0.5)', // kolor dla Mem
-                        'rgba(0, 0, 0, 0.5)' // kolor dla Strg
+                        'rgba(0, 200, 0, 0.5)', // kolor dla Mem
+                        'rgba(100, 0, 0, 0.5)' // kolor dla Strg
                     ],
                     borderColor: [
                         'rgba(0, 0, 0, 1)',
@@ -148,26 +162,90 @@
     async function showServerData(hostname)
     {
         let data = await fetchData(hostname)
-        console.log(data)
         let elements = document.querySelectorAll('[host="'+hostname+'"]')
         elements.forEach(element=>{
             let dataType = element.getAttribute("dataType");
-            console.log(dataType)
             if(dataType == "chart")
             {
-                showChartData(element, data)
+                showChartData(element, [data["CPU"],data["MEM"],data["STRG"]])
             }
             else if(dataType == "servicesRunning")
             {
-                element.innerHTML= 99
+                console.log(data["running_services"])
+                element.innerHTML= data["running_services"].length
+            }
+            else if(dataType == "servicesStopped")
+            {
+                console.log(data["stopped_services"])
+                element.innerHTML= data["stopped_services"].length
+            }
+            else if(dataType == "servicesOthersStatus")
+            {
+                console.log(data["others_status_services"])
+                element.innerHTML= data["others_status_services"].length
+            }
+            else if(dataType == "serviceStatus")
+            {
+                let service = element.getAttribute("service")
+                if(data["running_services"].includes(service)){
+
+                    element.classList.add("green");
+                    element.classList.remove("yellow");
+                    element.classList.remove("red");
+                }
+
+                else if(data["stopped_services"].includes(service)){
+                    element.classList.remove("green");
+                    element.classList.remove("yellow");
+                    element.classList.add("red");
+                }
+
+                else if(data["others_status_services"].includes(service)){
+                    element.classList.remove("green");
+                    element.classList.add("yellow");
+                    element.classList.remove("red");
+                }
+
+                else{
+                    element.classList.remove("green");
+                    element.classList.remove("yellow");
+                    element.classList.remove("red");
+                }
+
             }
         })
     }
 
- var hostList = {{ hostnames|safe }}
- hostList.forEach(server=>{
-    showServerData(server)
- })
+    hostList.forEach(server=>{
+        showServerData(server)
+        console.log(server)
+     })
+    
+
+    setInterval(function () {hostList.forEach(server=>{
+        showServerData(server)
+        console.log(server)
+     })}, 30000)
+
+
+
+ function showSubTable(elementID, subTableID) {
+
+    let element = document.getElementById(elementID);
+    let subTable = document.getElementById(subTableID);
+
+
+    if(subTable.style.display === 'none') {
+        subTable.style.display = 'block';
+        element.style.borderBottom = '0';
+    } else {
+        subTable.style.display = 'none';
+        element.style.borderBottom = '0.0625rem solid var(--whiteStroke)';
+    }
+    
+}
+
+document.getElementById("dashboard").classList.add('active')
 </script>
 {% endblock %}
 

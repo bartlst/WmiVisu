@@ -3,6 +3,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
     <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='basic-style.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename='global.css')}}">
@@ -23,24 +24,22 @@
             <button class="menu__item menu__item--logo"><img src="{{url_for('static', filename='logo.svg')}}" alt="">WMI Checker</button>
         </div>
         <div class="menu__item__wrapper menu__item__wrapper--mid">
-            <a class="hiddenA" href="/"><button id="dashboard" class="menu__item menu__item--button"><!--<img src="{{url_for('static', filename='icon-dashboard.svg')}}" alt="">-->Dashboard</button></a>
-            <a class="hiddenA" href="/manage_servers"><button id="manageServers" class="menu__item menu__item--button"><!--<img src="{{url_for('static', filename='icon-dashboard-add.svg')}}" alt="">-->Manage servers</button></a>
-            <a class="hiddenA" href="/settings"><button id="settings" class="menu__item menu__item--button"><!--<img src="{{url_for('static', filename='icon-settings.svg')}}" alt="">-->Settings</button></a>
+            <a class="hiddenA" href="/"><button id="dashboard" class="menu__item menu__item--button">Dashboard</button></a>
+            <a class="hiddenA" href="/manage_servers"><button id="manageServers" class="menu__item menu__item--button">Manage servers</button></a>
+            <a class="hiddenA" href="/settings"><button id="settings" class="menu__item menu__item--button">Settings</button></a>
         </div>
         <div class="menu__item__wrapper menu__item__wrapper--bottom">
-            <button class="menu__item menu__item--button"><img src="{{url_for('static', filename='icon-log-off.svg')}}" alt="">Log off</button>
+            <a class="hiddenA" href="/logout"><button class="menu__item menu__item--button" >Log off</button></a>
         </div>
     </div>
 
     <div class="pageContent">
-        <div class="pageContent__text pageContent__text--helloMsg">Hi {{user.username}},</div>
-        <div class="pageContent__text pageContent__text--msg">Check out server status</div>
+
         <h1 class="pageContent__text pageContent__text--pageName">{% block subPageTitle %}Home{% endblock %}</h1>
         <div class="navBar">
             <div class="notification-icon"></div>
             <div class="profileBar">
-                <div class="profileBar__avatar"></div>
-                <div class="profileBar__name">John Bartosh</div>
+                <div class="profileBar__name">{{user.username}}</div>
             </div>
         </div>
         {% block contener%}{% endblock %}
